@@ -1,0 +1,17 @@
+#summary Used software and hardware
+
+= List of usedsoftware and hardware =
+== Sofware ==
+The library is developed under Windows using the following free-of-charge tools:
+ * *WinAVR* - http://winavr.sourceforge.net/ - WinAVR includes the AVR-GCC compiler for C and C++ and provides an open source suite for Atmel AVR products on Windows.
+ * *AVR Studio* - http://www.atmel.com/dyn/Products/tools_card.asp?tool_id=2725 - AVR Studio is an IDE for developping 8-bit applications on Windows.
+ * *Python* - http://www.python.org/ - Python is used to send commands to the chip.
+ * *Pywin32* - http://sourceforge.net/projects/pywin32/ - Usefull Python modules under Windows.
+ * *Pyserial* - http://pyserial.sourceforge.net/ - Pyserial is used to communicate through the RS232 port between the PC and the board. 
+ * *Numpy* - http://numpy.scipy.org/ - Python module used to check computations on the chip.
+ * *KASH3* - http://www.math.tu-berlin.de/~kant/kash.html - KASH3 is a free clone of MAGMA. It has the sufficient features (notably finite field and elliptic curves) in order to generale values to test the implementation.
+
+== Hardware ==
+Here is the hardware used to develop the library. It should not be mandatory as the implementation should work on different Atmel AVR 8-bit chips by modifying a few variables in the code. The library can also be tested without any hardware by only using the AVR Studio debug platform called "AVR Simulator" that is a software emulation of the chips.
+ * *Atmel AVR STK600* - http://www.atmel.com/dyn/products/tools_card.asp?tool_id=4254 - The STK600 is a starter development kit for AVR chips. The kit is sold with an ATmega2560 chip. There is also a large list of extension modules for the STK600 in order to mount other Atmel AVR chips (see http://www.atmel.com/dyn/resources/prod_documents/stk600_socket_selection.html). The library is currently developed using the ATmega2561 chip and the socket extension STK600-TQFP64. The STK600 generally costs around 170 dollars.
+ * *AVR JTAGICE mkII* - http://www.atmel.com/dyn/Products/tools_card.asp?tool_id=3353 - The JTAGICE is a development tools used for debugging and device programming.
