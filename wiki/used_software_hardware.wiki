@@ -1,6 +1,5 @@
-#summary Used software and hardware
+#summary List of used software and hardware
 
-= List of usedsoftware and hardware =
 == Sofware ==
 The library is developed under Windows using the following free-of-charge tools:
  * *WinAVR* - http://winavr.sourceforge.net/ - WinAVR includes the AVR-GCC compiler for C and C++ and provides an open source suite for Atmel AVR products on Windows.
