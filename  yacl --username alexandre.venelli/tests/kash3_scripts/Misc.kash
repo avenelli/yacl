@@ -1,0 +1,124 @@
+chaineHex := "0123456789ABCDEF";
+
+fromHex := function(Nombre)
+	local Res,Nb,Ch,Cpt;
+	Res := 0;
+	Cpt := 1;
+	while (Cpt <= Length(Nombre)) do
+		Ch     := Nombre[Cpt];
+		if ((Ch >= '0') and (Ch <= '9'))
+		then	Res := Res*16 + ASCII(Ch) - ASCII('0');
+		elif ((Ch >= 'A') and (Ch <= 'F'))
+			then Res := Res*16 + 10 + ASCII(Ch) - ASCII('A');
+			elif ((Ch >= 'a') and (Ch <= 'f'))
+				then Res := Res*16 + 10 + ASCII(Ch) - ASCII('a');
+		fi;
+		Cpt := Cpt + 1;
+		od;
+	return Res;
+	end;
+
+toHex := function(Nombre)
+	local Res,Ch;
+	Res := "";
+	Ch  := " ";
+	while (Nombre > 0) do
+		Ch[1]  := chaineHex[(Nombre mod 16) + 1];
+		Res    := SPrint(Ch,Res);
+		Nombre := Floor(Nombre/16);
+		od;
+	return Res;
+	end;
+
+ToInteger := function(A)
+	return StringToInteger(SPrint(A));
+	end;
+
+ROTR := function(A,Positions,Taille)
+	return SequenceToInteger(Rotate(IntegerToSequence(A,2,Taille),Taille - Positions),2);
+	end;
+
+ROTL := function(A,Positions,Taille)
+	return SequenceToInteger(Rotate(IntegerToSequence(A,2,Taille),Positions),2);
+	end;
+
+AND := function(A,B,Taille)
+	local Cpt,S_A,S_B,S_R;
+
+	S_A := IntegerToSequence(A,2,Taille);
+	S_B := IntegerToSequence(B,2,Taille);
+	S_R := IntegerToSequence(0,2,Taille);
+	Cpt := 1;
+	while (Cpt <= Taille) do
+		S_R[Cpt] := S_A[Cpt] * S_B[Cpt];
+		Cpt := Cpt + 1;
+		od;
+
+	return SequenceToInteger(S_R,2);
+	end;
+
+XOR := function(A,B,Taille)
+	local Cpt,S_A,S_B,S_R;
+
+	S_A := IntegerToSequence(A,2,Taille);
+	S_B := IntegerToSequence(B,2,Taille);
+	S_R := IntegerToSequence(0,2,Taille);
+	Cpt := 1;
+	while (Cpt <= Taille) do
+		S_R[Cpt] := (S_A[Cpt] + S_B[Cpt]) mod 2;
+		Cpt := Cpt + 1;
+		od;
+
+	return SequenceToInteger(S_R,2);
+	end;
+
+NOT := function(A,Taille)
+	return XOR(A,2^Taille -1,Taille);
+	end;
+
+toHexLongueur := function(Nombre,Longueur)
+    local Chaine,Len;
+
+    if (Nombre = 0) then return "0"*Longueur; fi;
+
+    Chaine := toHex(Nombre);
+    if ((Length(Chaine) mod Longueur) <> 0)
+    then Len    := Longueur - (Length(Chaine) mod Longueur);
+        Chaine := "0"*Len + Chaine;
+    fi;
+    return Chaine;
+    end;
+
+toHex32 := function(Nombre)
+    return toHexLongueur(Nombre,8); 
+	end;
+
+FromBin:=function(B)
+	local i,res,power;
+	i:=2;
+	power:=2;
+	res:=ToInteger(B[1]);
+	while(i<=Length(B)) do
+		res:=res+ToInteger(B[i])*power;
+		power:=power*2;
+		i:=i+1;
+	od;
+	return res;
+end;
+
+ToBin := function(n)
+	local tmp,res,i,hw;
+	
+	tmp := n;
+	hw:=0;
+	i:=1;
+	res := [];
+	while(tmp<>0)
+	do
+		res[i] := tmp mod 2;
+		hw := hw+res[i];
+		tmp := Floor(tmp/2);
+		i:= i + 1;
+	od;
+	return [i-1,hw,res];
+end;
