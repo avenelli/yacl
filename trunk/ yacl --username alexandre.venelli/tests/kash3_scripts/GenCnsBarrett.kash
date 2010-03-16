@@ -1,0 +1,10 @@
+
+# B = 2^8 
+GenCns := function(B,NumberW,ModulusD)
+	local N;
+	N := NumberW;
+	B := B^(2*N);
+	B := Floor(B/ModulusD);
+	return B;
+	end;
+

@@ -1,0 +1,256 @@
+#Read("GenTestZpEcc.kash");
+Read("Misc.kash");
+Read("Fips186-2.kash");
+Read("ANSIX9-62.kash");
+Read("SEC2.kash");
+Read("ARCANA_ECDB.kash");
+Read("EccProjectif.kash");
+Read("GenCnsBarrett.kash");
+
+ListCurves := [
+"P192","P224","P239","P256","P384","P521","X192_1","X192_2","X192_3","X239_1","X239_2","X239_3","X256_1","secp112r1","secp112r2","secp128r1","secp128r2","secp160k1","secp160r1","secp160r2","secp192k1","secp192r1","secp224k1","secp224r1","secp256k1","secp256r1","secp384r1","secp512r1","w256_001","w256_002","w256_003","w256_004","w256_005","w256_006","w256_007","w256_008","w256_009","w256_010","w256_011","w256_012","w256_013","w256_014","w256_015","w256_016","w256_017","w384_001","w384_002","w384_003","w384_004","w384_005","w384_006","w384_007","w384_008","w384_009","w384_010","w384_011","w384_012","w384_013","w384_014","w384_015","w384_016","w384_017","w384_018","w512_001","w512_002","w512_003","w512_004","w512_005","w512_006","w512_007","w512_008","w512_009","w512_010","w512_011","w512_012","w512_013","w512_014","w512_015","w512_016","w512_017","w512_018"];
+
+K   := 5; # Number of values per test
+Cpt := 0;
+
+
+InitCurve := function(NomCourbe)
+	# FIPS
+	if (NomCourbe = "P192") then P192(); return; fi;
+	if (NomCourbe = "P224") then P224(); return; fi;
+	if (NomCourbe = "P239") then P239(); return; fi;
+	if (NomCourbe = "P256") then P256(); return; fi;
+	if (NomCourbe = "P384") then P384(); return; fi;
+	if (NomCourbe = "P521") then P521(); return; fi;
+	
+	# ANSI
+	if (NomCourbe = "X192_1") then X192_1(); return; fi;
+	if (NomCourbe = "X192_2") then X192_2(); return; fi;
+	if (NomCourbe = "X192_3") then X192_3(); return; fi;
+	if (NomCourbe = "X239_1") then X239_1(); return; fi;
+	if (NomCourbe = "X239_2") then X239_2(); return; fi;
+	if (NomCourbe = "X239_3") then X239_3(); return; fi;
+	if (NomCourbe = "X256_1") then X256_1(); return; fi;
+	
+	# SEC2
+	if (NomCourbe = "secp112r1") then secp112r1(); return; fi;
+	if (NomCourbe = "secp112r2") then secp112r2(); return; fi;
+	if (NomCourbe = "secp128r1") then secp128r1(); return; fi;
+	if (NomCourbe = "secp128r2") then secp128r2(); return; fi;
+	if (NomCourbe = "secp160k1") then secp160k1(); return; fi;
+	if (NomCourbe = "secp160r1") then secp160r1(); return; fi;
+	if (NomCourbe = "secp160r2") then secp160r2(); return; fi;
+	if (NomCourbe = "secp192k1") then secp192k1(); return; fi;
+	if (NomCourbe = "secp192r1") then secp192r1(); return; fi;
+	if (NomCourbe = "secp224k1") then secp224k1(); return; fi;
+	if (NomCourbe = "secp224r1") then secp224r1(); return; fi;
+	if (NomCourbe = "secp256k1") then secp256k1(); return; fi;
+	if (NomCourbe = "secp256r1") then secp256r1(); return; fi;
+	if (NomCourbe = "secp384r1") then secp384r1(); return; fi;
+	if (NomCourbe = "secp512r1") then secp512r1(); return; fi;
+	
+	# ARCANA
+	if(NomCourbe="w256_001") then w256_001(); return; fi;
+	if(NomCourbe="w256_002") then w256_002(); return; fi;
+	if(NomCourbe="w256_003") then w256_003(); return; fi;
+	if(NomCourbe="w256_004") then w256_004(); return; fi;
+	if(NomCourbe="w256_005") then w256_005(); return; fi;
+	if(NomCourbe="w256_006") then w256_006(); return; fi;
+	if(NomCourbe="w256_007") then w256_007(); return; fi;
+	if(NomCourbe="w256_008") then w256_008(); return; fi;
+	if(NomCourbe="w256_009") then w256_009(); return; fi;
+	if(NomCourbe="w256_010") then w256_010(); return; fi;
+	if(NomCourbe="w256_011") then w256_011(); return; fi;
+	if(NomCourbe="w256_012") then w256_012(); return; fi;
+	if(NomCourbe="w256_013") then w256_013(); return; fi;
+	if(NomCourbe="w256_014") then w256_014(); return; fi;
+	if(NomCourbe="w256_015") then w256_015(); return; fi;
+	if(NomCourbe="w256_016") then w256_016(); return; fi;
+	if(NomCourbe="w256_017") then w256_017(); return; fi;
+	if(NomCourbe="w384_001") then w384_001(); return; fi;
+	if(NomCourbe="w384_002") then w384_002(); return; fi;
+	if(NomCourbe="w384_003") then w384_003(); return; fi;
+	if(NomCourbe="w384_004") then w384_004(); return; fi;
+	if(NomCourbe="w384_005") then w384_005(); return; fi;
+	if(NomCourbe="w384_006") then w384_006(); return; fi;
+	if(NomCourbe="w384_007") then w384_007(); return; fi;
+	if(NomCourbe="w384_008") then w384_008(); return; fi;
+	if(NomCourbe="w384_009") then w384_009(); return; fi;
+	if(NomCourbe="w384_010") then w384_010(); return; fi;
+	if(NomCourbe="w384_011") then w384_011(); return; fi;
+	if(NomCourbe="w384_012") then w384_012(); return; fi;
+	if(NomCourbe="w384_013") then w384_013(); return; fi;
+	if(NomCourbe="w384_014") then w384_014(); return; fi;
+	if(NomCourbe="w384_015") then w384_015(); return; fi;
+	if(NomCourbe="w384_016") then w384_016(); return; fi;
+	if(NomCourbe="w384_017") then w384_017(); return; fi;
+	if(NomCourbe="w384_018") then w384_018(); return; fi;
+	if(NomCourbe="w512_001") then w512_001(); return; fi;
+	if(NomCourbe="w512_002") then w512_002(); return; fi;
+	if(NomCourbe="w512_003") then w512_003(); return; fi;
+	if(NomCourbe="w512_004") then w512_004(); return; fi;
+	if(NomCourbe="w512_005") then w512_005(); return; fi;
+	if(NomCourbe="w512_006") then w512_006(); return; fi;
+	if(NomCourbe="w512_007") then w512_007(); return; fi;
+	if(NomCourbe="w512_008") then w512_008(); return; fi;
+	if(NomCourbe="w512_009") then w512_009(); return; fi;
+	if(NomCourbe="w512_010") then w512_010(); return; fi;
+	if(NomCourbe="w512_011") then w512_011(); return; fi;
+	if(NomCourbe="w512_012") then w512_012(); return; fi;
+	if(NomCourbe="w512_013") then w512_013(); return; fi;
+	if(NomCourbe="w512_014") then w512_014(); return; fi;
+	if(NomCourbe="w512_015") then w512_015(); return; fi;
+	if(NomCourbe="w512_016") then w512_016(); return; fi;
+	if(NomCourbe="w512_017") then w512_017(); return; fi;
+	if(NomCourbe="w512_018") then w512_018(); return; fi;
+end;
+
+GenTestEccAdd := function(NomCourbe,NomFichier,RandomCoord,Compteur)
+     local LengthBytes,Nb, PointA,PointB,PointR, AX, AY, AZ, BX, BY, BZ, Cns, k;
+ 
+     Print("\n","GenTestEccAdd",NomCourbe," (",Compteur,")");
+
+     InitCurve(NomCourbe);
+
+	LengthBytes:=Ceiling(ToBin(p)[1]/8);	
+	Cns := GenCns(2^8,LengthBytes,p);
+	
+	k := Random(p);
+	PointA := k*G;
+	k := Random(p);
+	PointB := k*G;
+     
+
+     # Modèle projectif aléatoire
+     if (RandomCoord)
+     then if ((Compteur mod 3) = 0)
+		  then AZ := Random(Div(p,2),p-1);
+			   BZ := Random(Div(p,2),p-1);
+		  fi;
+		  if ((Compteur mod 3) = 1)
+		  then AZ := Random(Div(p,2),p-1);
+			   BZ := 1;
+		  fi;
+		  if ((Compteur mod 3) = 2)
+		  then AZ := 1;
+			   BZ := Random(Div(p,2),p-1);
+		  fi;
+     else AZ := 1;
+		  BZ := 1;
+     fi;
+	 AX := (ToInteger(PointA.x) * AZ^2) mod p;
+     AY := (ToInteger(PointA.y) * AZ^3) mod p;
+	 BX := (ToInteger(PointB.x) * BZ^2) mod p;
+     BY := (ToInteger(PointB.y) * BZ^3) mod p;
+
+	 PointR := EccProjAdd(AX,AY,AZ,BX,BY,BZ,false,false);
+	 PointR := ConvertProjAf(PointR[1],PointR[2],PointR[3]);
+	 PointR[3] := 1;
+	
+     AppendTo(NomFichier,"# P",NomCourbe," - ",Compteur,"\n");
+     if (RandomCoord) then
+        AppendTo(NomFichier,"# (RandomCoord)\n");
+     fi;
+
+     AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+     AppendTo(NomFichier,"A_X = ",toHexLongueur(AX,2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"A_Y = ",toHexLongueur(AY,2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"A_Z = ",toHexLongueur(AZ,2*(LengthBytes+4)),"\n");
+
+     AppendTo(NomFichier,"B_X = ",toHexLongueur(BX,2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"B_Y = ",toHexLongueur(BY,2*(LengthBytes+4)),"\n");
+	 AppendTo(NomFichier,"B_Z = ",toHexLongueur(BZ,2*(LengthBytes+4)),"\n");
+	 
+	 AppendTo(NomFichier,"ModBase = ",toHexLongueur(p,2*(LengthBytes+4)),"\n");
+	 AppendTo(NomFichier,"Cns = ",toHexLongueur(Cns,2*(LengthBytes+4)),"\n");
+	 
+     AppendTo(NomFichier,"TrueRes_X = ",toHexLongueur(PointR[1],2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"TrueRes_Y = ",toHexLongueur(PointR[2],2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"TrueRes_Z = ",toHexLongueur(1,2*(LengthBytes+4)),"\n");
+
+end;
+
+GenTestEccDbl := function(NomCourbe,NomFichier,RandomCoord,Compteur)
+     local LengthBytes,Nb, PointA,PointB,PointR, AX, AY, AZ, BX, BY, BZ, Cns,k;
+ 
+     Print("\n","GenTestEccDbl",NomCourbe," (",Compteur,")");
+
+    InitCurve(NomCourbe);
+
+	LengthBytes:=Ceiling(ToBin(p)[1]/8);	
+	Cns := GenCns(2^8,LengthBytes,p);
+	
+     k := Random(p);
+	PointA := k*G;
+     
+
+     # Modèle projectif aléatoire
+     if (RandomCoord)
+     then if ((Compteur mod 3) = 0)
+		  then AZ := 1;
+		  else AZ := Random(Div(p,2),p-1);
+		  fi;
+     else AZ := 1;
+     fi;
+	 AX := (ToInteger(PointA.x) * AZ^2) mod p;
+     AY := (ToInteger(PointA.y) * AZ^3) mod p;
+
+	 PointR := EccProjDbl(AX,AY,AZ,ParamA,false,false);
+	 PointR := ConvertProjAf(PointR[1],PointR[2],PointR[3]);
+	 PointR[3] := 1;
+     
+	
+     AppendTo(NomFichier,"# P",NomCourbe," - ",Compteur,"\n");
+     if (RandomCoord) then
+        AppendTo(NomFichier,"# (RandomCoord)\n");
+     fi;
+
+     AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+     AppendTo(NomFichier,"A_X = ",toHexLongueur(AX,2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"A_Y = ",toHexLongueur(AY,2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"A_Z = ",toHexLongueur(AZ,2*(LengthBytes+4)),"\n");
+	 
+	 AppendTo(NomFichier,"ParamA = ",toHexLongueur(ParamA,2*(LengthBytes+4)),"\n");
+	 AppendTo(NomFichier,"ModBase = ",toHexLongueur(p,2*(LengthBytes+4)),"\n");
+	 AppendTo(NomFichier,"Cns = ",toHexLongueur(Cns,2*(LengthBytes+4)),"\n");
+	 
+     AppendTo(NomFichier,"TrueRes_X = ",toHexLongueur(PointR[1],2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"TrueRes_Y = ",toHexLongueur(PointR[2],2*(LengthBytes+4)),"\n");
+     AppendTo(NomFichier,"TrueRes_Z = ",toHexLongueur(1,2*(LengthBytes+4)),"\n");
+
+end;
+
+GenerateEccAddVal := function(NomCourbe)
+	local NomFichier,CptTot;
+	NomFichier:=Append("Test_ZpEccAdd",NomCourbe);
+	NomFichier:=Append(NomFichier,".val","");
+	PrintTo(NomFichier,"");
+	CptTot := 1;
+	for Cpt in [1..K] do
+		 GenTestEccAdd   (NomCourbe,NomFichier,TRUE,CptTot);
+		 CptTot := CptTot+1;
+	od;
+end;
+
+GenerateEccDblVal := function(NomCourbe)
+	local NomFichier,CptTot;
+	NomFichier:=Append("Test_ZpEccDbl",NomCourbe);
+	NomFichier:=Append(NomFichier,"Val.val","");
+	PrintTo(NomFichier,"");
+	CptTot := 1;
+	for Cpt in [1..K] do
+		 GenTestEccDbl   (NomCourbe,NomFichier,TRUE,CptTot);
+		 CptTot := CptTot+1;
+	od;
+end;
+
+All := function()
+	local i;
+	i:=1;
+	while(i<=Length(ListCurves)) do
+		GenerateEccAddVal(ListCurves[i]);
+		GenerateEccDblVal(ListCurves[i]);
+		i:=i+1;
+	od;
+end;
+

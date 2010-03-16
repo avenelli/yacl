@@ -1,0 +1,292 @@
+#Read("GenTestZp.kash");
+Read("Misc.kash");
+Read("GenCnsBarrett.kash");
+
+K   := 2; # Number of values per test
+Cpt := 0;
+
+GenTestZpAdd := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,B,TrueRes;
+	
+	Print("\n","GenTestZpAdd(",Compteur,")");
+	
+	 p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 A := Random(p);
+	 B := Random(p);
+	 TrueRes := A+B;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"B = ",toHex(B),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+
+GenTestZpSub := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,B,TrueRes,Tmp;
+	
+	Print("\n","GenTestZpSub(",Compteur,")");
+
+	 
+	 p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 A := Random(p);
+	 B := Random(p);
+	 if(A < B)	
+	 then
+		Tmp := A;
+		A := B;
+		B := Tmp;
+	fi;
+	
+	TrueRes := A-B;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"B = ",toHex(B),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+
+GenTestZpMult := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,B,TrueRes;
+	
+	Print("\n","GenTestZpMult(",Compteur,")");
+
+    p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 A := Random(p);
+	 B := Random(p);
+	 TrueRes := A*B;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"B = ",toHex(B),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+
+GenTestZpMul2d := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,B,TrueRes;
+	
+	Print("\n","GenTestZpMul2d(",Compteur,")");
+
+     p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 
+	 A := Random(p);
+	 B := Random(255);
+	 TrueRes := A*2^B;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"B = ",toHex(B),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+	 
+GenTestZpMult1B := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,B,TrueRes;
+	
+	Print("\n","GenTestZpMult1B(",Compteur,")");
+
+     p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 
+	 A := Random(p);
+	 B := Random(255);
+	 TrueRes := A*B;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"B = ",toHex(B),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+	 
+GenTestZpSquare := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,TrueRes;
+	
+	Print("\n","GenTestZpSquare(",Compteur,")");
+
+     p:= Random(2^(8*SizeLimitInBytes));
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 A := Random(p);
+	 TrueRes := A^2;
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+
+GenTestZpRedMod := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,TrueRes,Cns;
+	
+	Print("\n","GenTestZpRedMod(",Compteur,")");
+
+     p:= Random(2^(8*SizeLimitInBytes));
+	 p:= NextPrime(p);
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 Cns := GenCns(2^8,LengthBytes,p);
+	 
+	 A := Random(2^(2*8*LengthBytes));
+	 TrueRes := A mod p;
+	 
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"ModBase = ",toHex(p),"\n");
+	 AppendTo(NomFichier,"Cns = ",toHex(Cns),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+
+GenTestZpInvMod := function(NomFichier,SizeLimitInBytes,Compteur)
+	local LengthBytes,Nb,A,TrueRes;
+	
+	Print("\n","GenTestZpInvMod(",Compteur,")");
+
+     p:= Random(2^(8*SizeLimitInBytes));
+	 p:= NextPrime(p);
+	 LengthBytes := Ceiling(ToBin(p)[1]/8);
+	 
+	 A := Random(p);
+	 TrueRes := InverseMod(A,p);
+	 
+	 AppendTo(NomFichier,"# ",Compteur,"\n");
+	 AppendTo(NomFichier,"LengthBytes = ",toHex(LengthBytes),"\n");
+	 AppendTo(NomFichier,"A = ",toHex(A),"\n");
+	 AppendTo(NomFichier,"ModBase = ",toHex(p),"\n");
+	 AppendTo(NomFichier,"TrueRes = ",toHex(TrueRes),"\n");
+	 
+	 end;
+	 
+GenerateAddVal := function()
+	NomFichier:=Append("Test_ZpAdd.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpAdd   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+	
+GenerateSubVal := function()
+	NomFichier:=Append("Test_ZpSub.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpSub   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+
+GenerateMultVal := function()
+	NomFichier:=Append("Test_ZpMult.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpMult   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+
+GenerateMul2dVal := function()
+	NomFichier:=Append("Test_ZpMul2d.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpMul2d   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+	
+GenerateMult1BVal := function()
+	NomFichier:=Append("Test_ZpMult1B.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpMult1B   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+	
+GenerateSquareVal := function()
+	NomFichier:=Append("Test_ZpSquare.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpSquare   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+
+GenerateRedModVal := function()
+	NomFichier:=Append("Test_ZpRedMod.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpRedMod   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+
+GenerateInvModVal := function()
+	NomFichier:=Append("Test_ZpInvMod.val","");
+	Bytes:=10;
+	CptTot := 1;
+	while(Bytes<=60) do
+		for Cpt in [1..K] do
+			GenTestZpInvMod   (NomFichier,Bytes,CptTot);
+			CptTot := CptTot+1;
+		od;
+		Bytes:=Bytes+10;
+	od;
+	end;
+
+	
+GenerateAddVal();
+GenerateSubVal();
+GenerateMultVal();
+GenerateMul2dVal();
+GenerateMult1BVal();
+GenerateSquareVal();
+GenerateRedModVal();
+GenerateInvModVal();

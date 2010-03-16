@@ -1,0 +1,82 @@
+#Read("RedBarrett.kash");
+Read("Misc.kash");
+Read("GenCnsBarrett.kash");
+
+
+# Test Values
+b:=2^8;
+x:=fromHex("D25F7B567C3E7670AB3543CB58BF51AEF299");
+p:=fromHex("300B05CC21A152B7EB51");
+modlength:=Ceiling(ToBin(p)[1]/8);
+cns:=GenCns(b,modlength,p);
+
+
+
+nb_bits_rs := 8*(modlength+1);
+x_bin:=ToBin(x);
+len:=x_bin[1];
+x_bin:=x_bin[3];
+tmp := [];
+i:=1;
+while(i<=nb_bits_rs) do
+	tmp[i] := x_bin[len-i+1];
+	i:=i+1;
+od;
+R:=FromBin(Reverse(tmp));
+
+R:=Floor(x/((2^8)^(modlength-1)));
+Print("R=",toHex(R),"\n");
+
+Q:=R*cns;
+Print("Q:=R*cns = ",toHex(Q),"\n");
+nb_bits := 8*(modlength);
+q_bin:=ToBin(Q);
+len:=q_bin[1];
+q_bin:=q_bin[3];
+tmp := [];
+i:=1;
+while(i<=nb_bits) do
+	tmp[i] := q_bin[len-i+1];
+	i:=i+1;
+od;
+
+Q:=Floor(Q/((2^8)^(modlength+1)));
+Print("M+1 MSB = ",toHex(Q),"\n");
+
+
+R:=Q*p;
+Print("R:=Q*p = ",toHex(R),"\n");
+nb_bits := 8*(modlength+1);
+r_bin:=ToBin(R);
+len:=r_bin[1];
+r_bin:=r_bin[3];
+tmp := [];
+i:=1;
+while(i<=nb_bits) do
+	tmp[i] := r_bin[i];
+	i:=i+1;
+od;
+R:=R mod (2^8)^(modlength+1);
+Print("M+1 LSB = ",toHex(R),"\n");
+
+X := x mod (2^8)^(modlength+1);
+Print("X=X mod beta^(m+1) = ",toHex(X),"\n");
+
+Q:=X-R;
+Print("Q:=X-R = ",toHex(Q),"\n");
+if(Q<0) then 
+	Q:=Q+(2^8)^(modlength+1); 
+	Print("Q = ",toHex(Q),"\n");
+fi;
+
+while(Q>0) do
+	X:=Q-p;
+	if(X > 0) then
+		Print("X:=Q-p = ",toHex(X),"\n");
+	else
+		Print("X:=Q-p = -",toHex(AbsoluteValue(X)),"\n");
+	fi;
+	Q:=X;
+od;
+R:=Q+p;
+Print("R:=Q+p = ",toHex(R),"\n");

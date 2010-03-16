@@ -1,0 +1,430 @@
+Read("Misc.kash");
+
+
+ConvertProjAf := function(X,Y,Z)
+     local InvZ, InvZ2, InvZ3,tmpX,tmpY;
+     InvZ:= InverseMod(Z,p);
+     InvZ2:=(InvZ^2) mod p;
+     InvZ3:=(InvZ^3) mod p;
+     tmpX:= (X*InvZ2) mod p;
+     tmpY:= (Y*InvZ3) mod p;
+     return [tmpX,tmpY];
+     end;
+
+EccProjDbl := function(X1,Y1,Z1,a,debug,verbose)
+     local TEMPz1,Buf,L1,L2,L3,Verif1,Verif2;
+     
+     if (verbose) then Print("\n***************\nLAUNCH DOUBLING"); fi;
+     
+     Verif1 := 2*MakePoint(Courbe,ConvertProjAf(X1,Y1,Z1));
+     
+     L1 := X1^2 mod p;
+     if (verbose) then Print("\nL1 = X1^2 = ",toHex32(L1)); fi;
+     
+     L2 := Z1^2 mod p;
+     if (verbose) then Print("\nL2 = Z1^2 = ",toHex32(L2));fi;
+     
+     L2 := L2^2 mod p;
+     if (verbose) then Print("\nL2 = L2^2 = ",toHex32(L2));fi;
+     
+     Buf := L2 * a;
+     if (verbose) then Print("\nBuf = L2*A =        ",toHex32(Buf));fi;
+     
+     L1 := (Buf + 3*L1) mod p;
+     if (verbose) then Print("\nL1 = Buf + 3 * L1 = ",toHex32(L1));fi;
+     
+     Buf := Y1*Z1;
+     if (verbose) then Print("\nBuf = Y1*Z1 =       ",toHex32(Buf));fi;
+     
+     TEMPz1 := (2*Buf) mod p;
+     if (verbose) then Print("\nZ1 = 2*Buf =        ",toHex32(TEMPz1));fi;
+     
+     L3 := (Y1^2) mod p;
+     if (verbose) then Print("\nL3 = Y1^2 =         ",toHex32(L3));fi;
+     
+     Buf := X1*L3;
+     if (verbose) then Print("\nBuf = X1*L3 =       ",toHex32(Buf));fi;
+     
+     L2 := (4*Buf) mod p;
+     if (verbose) then Print("\nL2 = 4*Buf =        ",toHex32(L2));fi;
+     
+     Buf := (L1^2) mod p;
+     if (verbose) then Print("\nBuf = L1^2 =        ",toHex32(Buf));fi;
+     
+     X1 := (Buf - 2*L2) mod p; 
+     if (verbose) then Print("\nX1 = Buf - 2*L2 =   ",toHex32(X1));fi;
+     
+     Buf := (L3^2) mod p;
+     if (verbose) then Print("\nBuf = L3^2 =        ",toHex32(Buf));fi;
+     
+     Z1 := (8*Buf) mod p;
+     if (verbose) then Print("\nZ1 = 8*Buf =        ",toHex32(Z1));fi;
+     
+     L2 := (L2-X1) mod p;
+     if (verbose) then Print("\nL2 = L2-X1 =        ",toHex32(L2));fi;
+     
+     Y1 := (L1*L2 -Z1) mod p;
+     if (verbose) then Print("\nY1 = (-Z1) + L1*L2 =",toHex32(Y1));fi;
+     
+     Z1 := TEMPz1;
+     
+     if(debug) then
+     Print("\nL1 = ",toHex32(L1));
+     Print("\nL2 = ",toHex32(L2));
+     Print("\nL3 = ",toHex32(L3));
+     
+     Print("\nX = ",toHex32(X1));
+     Print("\nY = ",toHex32(Y1));
+     Print("\nZ = ",toHex32(Z1),"\n");
+     fi;
+     
+     Verif2 := MakePoint(Courbe,ConvertProjAf(X1,Y1,Z1));
+     
+     if (Verif1 <> Verif2) then Print("##################################Erreur dans Doublement"); fi;
+     
+     if (verbose) then Print("\n");fi;
+     return [X1,Y1,Z1];
+     end;
+
+EccProjAdd := function(X1,Y1,Z1,Xinit,Yinit,Zinit,debug,verbose)
+     local Point2,X2,Y2,Buf,L1,L2,L3,L4,Verif1,Verif2;
+     
+     if (verbose) then Print("\n***************\nLAUNCH ADDITION"); fi;
+     Verif1 := MakePoint(Courbe,ConvertProjAf(X1,Y1,Z1)) + MakePoint(Courbe,ConvertProjAf(Xinit,Yinit,Zinit));
+     
+     Point2 := ConvertProjAf(Xinit,Yinit,Zinit);
+     
+     X2 := Point2[1];
+     Y2 := Point2[2];
+     
+     L1 := Z1^2 mod p;
+     if (verbose) then Print("\nL1 = Z1^2 =         ",toHex32(L1));fi;
+     
+     L2 := (X1 - X2*L1) mod p;
+     if (verbose) then Print("\nL2 = X1 - X2*L1 =   ",toHex32(L2));fi;
+     
+     L3 := (X1 + X2*L1) mod p;
+     if (verbose) then Print("\nL3 = X1 + X2*L1 =   ",toHex32(L3));fi;
+     
+     L1 := (Z1*L1) mod p;
+     if (verbose) then Print("\nL1 = Z1*L1 =        ",toHex32(L1));fi;
+     
+     L4 := (Y1 - Y2*L1) mod p;
+     if (verbose) then Print("\nL4 = Y1 - Y2*L1 =   ",toHex32(L4));fi;
+     
+     X2 := (Y1 + Y2*L1) mod p;
+     if (verbose) then Print("\nX2 = Y1 + Y2*L1 =   ",toHex32(X2));fi;
+     
+     Z1 := (Z1*L2) mod p;
+     if (verbose) then Print("\nZ1 = Z1*L2 =        ",toHex32(Z1));fi;
+     
+     L1 := (L4^2) mod p;
+     if (verbose) then Print("\nL1 = L4^2 =         ",toHex32(L1));fi;
+     
+     Y2 := (L2^2) mod p;
+     if (verbose) then Print("\nY2 = L2^2 =         ",toHex32(Y2));fi;
+     
+     L3 := (L3*Y2) mod p;
+     if (verbose) then Print("\nL3 = L3*Y2 =        ",toHex32(L3));fi;
+     
+     X1 := (p + L1 - L3) mod p;
+     if (verbose) then Print("\nX1 = L1 - L3 =      ",toHex32(X1));fi;
+     
+     L3 := (4 * p + L3 - 2*X1) mod p;
+     if (verbose) then Print("\nL3 = L3 - 2*X1 =    ",toHex32(L3));fi;
+     
+     Y2 := (L2*Y2) mod p;
+     if (verbose) then Print("\nY2 = L2*Y2 =         ",toHex32(Y2));fi;
+     
+     L3 := (L4*L3) mod p;
+     if (verbose) then Print("\nL3 = L3*L4 =         ",toHex32(L3));fi;
+     
+     Y1 := ((L3 - X2*Y2) * InverseMod(2,p)) mod p; 
+     if (verbose) then Print("\nY1 = (L3 - X2*Y2)/2 =   ",toHex32(Y1));fi;
+     
+     if(debug) then
+     Print("\nL1 = ",toHex32(L1));
+     Print("\nL2 = ",toHex32(L2));
+     Print("\nL3 = ",toHex32(L3));
+     
+     Print("\nX = ",toHex32(X1));
+     Print("\nY = ",toHex32(Y1));
+     Print("\nZ = ",toHex32(Z1),"\n");
+     fi;
+     Verif2 := MakePoint(Courbe,ConvertProjAf(X1,Y1,Z1));
+     
+     if (Verif1 <> Verif2) then Print("##################################Erreur dans Addition"); fi;
+     
+     if (verbose) then Print("\n");fi;
+     return [X1,Y1,Z1];
+     end;
+	 
+DbgProjAdd:=function(x1,y1,z1,x2,y2,z2)
+	local c1,c2,c3,buf,L;
+	
+	c1:=z1^2;
+	Print("c1 := z1^2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	c2:=x2*c1;
+	Print("c2:=x2*c1=",toHex32(c2),"\n");
+	c2:=c2 mod p;
+	Print("c2:=c2 mod p=",toHex32(c2),"\n");
+	
+	c1:=c1*z1;
+	Print("c1:=c1*z1=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	c3:=y2*c1;
+	Print("c3:=y2*c1=",toHex32(c3),"\n");
+	c3:=c3 mod p;
+	Print("c3:=c3 mod p=",toHex(c3),"\n");
+	
+	c1:=z2^2;
+	Print("c1:=z2^2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	x1:=x1*c1;
+	Print("x1:=x1*c1=",toHex32(x1),"\n");
+	x1:=x1 mod p;
+	Print("x1:=x1 mod p=",toHex32(x1),"\n");
+	
+	c1:=c1*z2;
+	Print("c1:=c1*z2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	y1:=y1*c1;
+	Print("y1:=y1*c1=",toHex32(y1),"\n");
+	y1:=y1 mod p;
+	Print("y1:=y1 mod p=",toHex32(y1),"\n");
+	
+	z1:=z1*z2;
+	Print("z1:=z1*z2=",toHex32(z1),"\n");
+	z1:=z1 mod p;
+	Print("z1:=z1 mod p=",toHex32(z1),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+y1;
+	Print("buf:=buf+y1=",toHex32(buf),"\n");
+	buf:=buf-c3;
+	Print("buf:=buf-c3=",toHex32(buf),"\n");
+	c1:=buf mod p;
+	Print("c1:=buf mod p=",toHex32(c1),"\n");
+	
+	buf:=y1+c3;
+	Print("buf:=y1+c3=",toHex32(buf),"\n");
+	y1:=buf mod p;
+	Print("y1:=buf mod p=",toHex32(y1),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+x1;
+	Print("buf:=buf+x1=",toHex32(buf),"\n");
+	buf:=buf-c2;
+	Print("buf:=buf-c2=",toHex32(buf),"\n");
+	c3:=buf mod p;
+	Print("c3:=buf mod p=",toHex32(c3),"\n");
+	
+	buf:=x1+c2;
+	Print("buf:=x1+c2=",toHex32(buf),"\n");
+	x1:=buf mod p;
+	Print("x1:=buf mod p=",toHex32(x1),"\n");
+	
+	z1:=z1*c3;
+	Print("z1:=z1*c3=",toHex32(z1),"\n");
+	z1:=z1 mod p;
+	Print("z1:=z1 mod p=",toHex32(z1),"\n");
+	
+	c2:=c3^2;
+	Print("c2:=c3^2=",toHex32(c2),"\n");
+	c2:=c2 mod p;
+	Print("c2:=c2 mod p=",toHex32(c2),"\n");
+	
+	c3:=c2*c3;
+	Print("c3:=c2*c3=",toHex32(c3),"\n");
+	c3:=c3 mod p;
+	Print("c3:=c3 mod p=",toHex32(c3),"\n");
+	
+	c2:=c2*x1;
+	Print("c2:=c2*x1=",toHex32(c2),"\n");
+	c2:=c2 mod p;
+	Print("c2:=c2 mod p=",toHex32(c2),"\n");
+	
+	c3:=c3*y1;
+	Print("c3:=c3*y1=",toHex32(c3),"\n");
+	c3:=c3 mod p;
+	Print("c3:=c3 mod p=",toHex32(c3),"\n");
+	
+	y1:=c1^2;
+	Print("y1:=c1^2",toHex32(y1),"\n");
+	y1:=y1 mod p;
+	Print("y1:=y1 mod p=",toHex32(y1),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+y1;
+	Print("buf:=buf+y1=",toHex32(buf),"\n");
+	buf:=buf-c2;
+	Print("buf:=buf-c2=",toHex32(buf),"\n");
+	x1:=buf mod p;
+	Print("x1:=buf mod p=",toHex32(x1),"\n");
+	
+	buf:=2^4*p;
+	Print("buf:=2^4*p=",toHex32(buf),"\n");
+	buf:=buf+c2;
+	Print("buf:=buf+c2=",toHex32(buf),"\n");
+	buf:=buf-x1;
+	Print("buf:=buf-x1=",toHex32(buf),"\n");
+	buf:=buf-x1;
+	Print("buf:=buf-x1=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	c1:=c1*c2;
+	Print("c1:=c1*c2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+c1;
+	Print("buf:=buf+c1=",toHex32(buf),"\n");
+	buf:=buf-c3;
+	Print("buf:=buf-c3=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	L:=230;
+	Print("L:=c2 mod 16=",toHex32(L),"\n");
+	buf:=L*p;
+	Print("buf:=L*p=",toHex32(buf),"\n");
+	y1:=c2+buf;
+	Print("y1:=c2+buf=",toHex32(y1),"\n");
+	y1:=Div(y1,2);
+	Print("y1:=Div(y1,2)=",toHex32(y1),"\n");
+	y1:=y1 mod p;
+	Print("y1:=y1 mod p=",toHex32(y1),"\n");
+	
+	Print("\n----------------------\n");
+	Print("x3 = ",toHex32(x1),"\n");
+	Print("y3 = ",toHex32(y1),"\n");
+	Print("z3 = ",toHex32(z1),"\n");
+end;
+
+DbgProjDbl:=function(x,y,z,a)
+	local c1,c2,buf,aff;
+	
+	c1:=z^2;
+	Print("c1:=z^2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	buf:=y*z;
+	Print("buf:=y*z=",toHex32(buf),"\n");
+	z:=buf mod p;
+	Print("z:=buf mod p=",toHex32(z),"\n");
+	buf:=2*z;
+	Print("buf:=2*z=",toHex32(buf),"\n");
+	z:=buf mod p;
+	Print("z:=buf mod p=",toHex32(z),"\n");
+	
+	c1:=c1^2;
+	Print("c1:=c1^2=",toHex32(c1),"\n");
+	c1:=c1 mod p;
+	Print("c1:=c1 mod p=",toHex32(c1),"\n");
+	
+	buf:=y^2;
+	Print("buf:=y^2=",toHex32(buf),"\n");
+	y:=buf mod p;
+	Print("y:=buf mod p=",toHex32(y),"\n");
+	
+	buf:=x^2;
+	Print("buf:=x^2=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	buf:=x*y;
+	Print("buf:=x*y=",toHex32(buf),"\n");
+	x:=buf mod p;
+	Print("x:=buf mod p=",toHex32(x),"\n");
+	buf:=4*x;
+	Print("buf:=4*x=",toHex32(buf),"\n");
+	x:=buf mod p;
+	Print("x:=buf mod p=",toHex32(x),"\n");
+	
+	buf:=3*c2;
+	Print("buf:=3*c2=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	buf:=a*c1;
+	Print("buf:=a*c1=",toHex32(buf),"\n");
+	c1:=buf mod p;
+	Print("c1:=buf mod p=",toHex32(c1),"\n");
+	
+	buf:=c2+c1;
+	Print("buf:=c2+c1=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	buf:=y^2;
+	Print("buf:=y^2=",toHex32(buf),"\n");
+	y:=buf mod p;
+	Print("y:=buf mod p=",toHex32(y),"\n");
+	
+	buf:=8*y;
+	Print("buf:=8*y=",toHex32(buf),"\n");
+	y:=buf mod p;
+	Print("y:=buf mod p=",toHex32(y),"\n");
+	
+	buf:=c2^2;
+	Print("buf:=c2^2=",toHex32(buf),"\n");
+	
+	buf:=buf-x;
+	Print("buf:=buf-x=",toHex32(buf),"\n");
+	buf:=buf-x;
+	Print("buf:=buf-x=",toHex32(buf),"\n");
+	c1:=buf mod p;
+	Print("c1:=buf mod p=",toHex32(c1),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+x;
+	Print("buf:=buf+x=",toHex32(buf),"\n");
+	buf:=buf-c1;
+	Print("buf:=buf-c1=",toHex32(buf),"\n");
+	x:=buf mod p;
+	Print("x:=buf mod p=",toHex32(x),"\n");
+	
+	buf:=c2*x;
+	Print("buf:=c2*x=",toHex32(buf),"\n");
+	c2:=buf mod p;
+	Print("c2:=buf mod p=",toHex32(c2),"\n");
+	
+	buf:=2*p;
+	Print("buf:=2*p=",toHex32(buf),"\n");
+	buf:=buf+c2;
+	Print("buf:=buf+c2=",toHex32(buf),"\n");
+	buf:=buf-y;
+	Print("buf:=buf-y=",toHex32(buf),"\n");
+	y:=buf mod p;
+	Print("y:=buf mod p=",toHex32(y),"\n");
+	
+	x:=c1 mod p;
+	Print("x:=c1 mod p=",toHex32(x),"\n");
+	
+	Print("\n----------------------\n");
+	Print("x3 = ",toHex32(x),"\n");
+	Print("y3 = ",toHex32(y),"\n");
+	Print("z3 = ",toHex32(z),"\n");
+	
+	aff:=ConvertProjAf(x,y,z);
+	Print("\n----------------------\n");
+	Print("x3 = ",toHex32(aff[1]),"\n");
+	Print("y3 = ",toHex32(aff[2]),"\n");
+end;
