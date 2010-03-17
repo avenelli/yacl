@@ -1,0 +1,76 @@
+#summary Howto on measurement setup for power analysis
+
+Here is a quick tutorial for power consumption curve measurement on the STK600 board with an oscilloscope.
+
+= Voltage settings in AVR Studio =
+
+http://sites.google.com/site/yacldoc/board_init.png
+
+In the photo above, we see the STK600 board with just the basic settings. The VTARGET jumper must be set. Connect the board through USB to a computer. Launch AVR Studio.
+
+Connect the board via USB in AVR Studio.
+
+http://sites.google.com/site/yacldoc/avr_studio1.png
+
+Set the VTARGET voltage, for example at 3.3V like in the figure. Then "Write" the value in the board.
+
+http://sites.google.com/site/yacldoc/avr_studio2.png
+
+
+= Power measurement only using a 12V power supply =
+Here, the STK600 board and the ATmega chip are both powered by the 12V.
+
+Required STK600 setup:
+ * For RS232 communication, connect a 2-pin cable from
+  * RS232 SPARE – Pin RXD -> PORTE – Pin PE0
+  * RS232 SPARE – Pin TXD -> PORTE – Pin PE1
+ * Replace the VTARGER jumper with a cable that connect the 2 pins (so that it is easier to attach a probe).
+
+A glitch must be set in the YACL code around the operation we want to measure. Look in the file "com.c" of the library for instructions on how to set glitches. The glitch system basicaly set all the bits of the PORTA to ones just before the operation and set them to zero just after. The trigger probe of the oscilloscope is then connected on the PORTA (to any pin of PORTA as they are all modified by the glitch function). 
+
+A power measurement probe is connected to the cable that relies the pins of the VTARGET.
+
+For this example, we want to record the consumption of a multiplication of two 4-bytes integers. We first create a Python script to send the operations to the board. Here is the main part of the script:
+{{{
+# Values of the two 4-bytes multiplicands
+X = [0x63, 0xE8, 0xF1, 0xF6]
+Y = [0x76, 0xD8, 0xDD, 0x4C]
+
+# Memory locations of the two integers and the result
+AdrX = [0x00, 0x04]
+AdrY = [0x04, 0x04]
+AdrR = [0x08, 0x04]
+
+# Write X and Y
+sercom.SERSend([0x01,INS_WRITERAM]+AdrX+[len(X)]+X)
+sercom.SERSend([0x01,INS_WRITERAM]+AdrY+[len(Y)]+Y)
+
+# Launch multiplication
+sercom.SERSend([0x01, INS_COMMAND, CMD_ZPMULT, 0x00, 0x08]+AdrR+AdrX+AdrY+[len(X), 0x00])
+}}}
+
+Here is what the operation should look like on the oscilloscope.
+
+http://sites.google.com/site/yacldoc/12V_MULT_4x4.png
+
+We can hardly notice that this power curve comes from a multiplication, even less a multiplication between two 4-bytes integers. Indeed, there is a lot of "noise" in the trace as both the STK600 and the chip (that actually executes the multiplication) are powered by the 12V power supply. Hence, the oscilloscope does not only record the power consumption differences induced by the multiplication but also the power requiered by all the active peripherals of the STK600. A solution to obtain clearer power traces is to use separate supplies for the board and the chip and only measure the activity of the chip.
+
+
+= Power measurement using a stabilized power supply =
+We in fact use both a 12V power supply and a stabilized one. The 12V will only power the STK600 while the stabilized power supply will only power the ATmega. One must be carefull regarding how to power those two systems separatly. The STK600 must be powered *BEFORE* the ATmega.
+
+The STK600 setup is modified:
+ * *The VTARGET jumper is removed*.
+ * The stabilized power supply is connected on the VTG/GND pins of one of the PORT of the STK600. In the figure below, we connected it to PORTG. The stabilized power supply is set to output 3.3V (as we configured in the first section) and 50mA. The amperage comes from an observation during the previous setup (board and chip on the 12V).
+
+http://sites.google.com/site/yacldoc/board_acq.png
+
+Again, you must power the STK600 board FIRST. Then, the ATmega must be powered by the stabilized power supply.
+
+The trigger probe is still connected to PORTA. The power measurement probe is on the VTG cable connecting the stabilized power supply and the chip.
+
+With the same Python script as before, we obtain this result.
+
+http://sites.google.com/site/yacldoc/STA_MULT_4x4.png
+
+We now clearly see the multiplication of two 4-bytes integers on the power trace. The information is this trace can then be easily utilized for side-channel analysis.
