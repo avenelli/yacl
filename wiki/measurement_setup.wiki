@@ -4,7 +4,7 @@ Here is a quick tutorial for power consumption curve measurement on the STK600 b
 
 = Voltage settings in AVR Studio =
 
-<img src="https://docs.google.com/leaf?id=0B2xRUslaRSxoOTA2YWQ2MDctNzA2Mi00MzhlLWFkNTItZDIyMjA5NjcxOWYy"/>
+http://yacl.googlecode.com/svn/trunk/12V_MULT_4x4.png
 
 In the photo above, we see the STK600 board with just the basic settings. The VTARGET jumper must be set. Connect the board through USB to a computer. Launch AVR Studio.
 
